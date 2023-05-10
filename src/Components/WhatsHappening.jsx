@@ -1,23 +1,54 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import { useState, useId } from "react";
 import { Avatar } from "@mui/material";
 import ImageIcon from "@mui/icons-material/Image";
 import GifBoxIcon from "@mui/icons-material/GifBox";
 import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
+import { useSelector } from "react-redux";
+import firebase from "../firebase";
+import "firebase/database";
+import moment from "moment";
+import { useDispatch } from "react-redux";
+import { postsActions } from "../store";
 
 function WhatsHappening() {
-  const submit = (e) => {
+  const currentUser = useSelector((state) => state.auth.currentUser);
+  const { displayName, email, photoURL, uid } = currentUser._delegate;
+  const dispatch = useDispatch();
+
+  const [text, setText] = useState("");
+
+  const submit = async (e) => {
     e.preventDefault();
-    console.log("siema");
+    const newPostRef = firebase.database().ref("posts").push();
+    const newPost = {
+      displayName,
+      text,
+      timestamp: firebase.database.ServerValue.TIMESTAMP,
+      photoURL,
+      howManyLikes: 0,
+      comments: 0,
+    };
+    if (!text) return;
+    newPostRef.set(newPost);
+    setText("");
+
+    const postsRef = firebase.database().ref("posts");
+    try {
+      const snapshot = await postsRef.once("value");
+      const posts = snapshot.val();
+      dispatch(postsActions.setPosts(posts));
+    } catch (error) {
+      dispatch(postsActions.setError(error.message));
+    }
   };
-
-  useSelector((state) => state.counter);
-
   return (
-    <div className="w-full">
+    <div className="w-full pb-2 border-b-[1px] border-gray-500">
       <div className="flex justify-center pl-8 mt-8">
         <div className="pr-8">
-          <Avatar sx={{ width: "64px", height: "64px" }} />
+          <Avatar
+            sx={{ width: "64px", height: "64px", zIndex: "-1" }}
+            src={photoURL}
+          />
         </div>
         <div className="flex flex-col gap-8 basis-full">
           <form onSubmit={submit}>
@@ -25,7 +56,9 @@ function WhatsHappening() {
               <input
                 placeholder="What's happening?"
                 type="text"
-                className="w-full bg-black outline-none placeholder:text-xl border-b-2 border-gray-500 pb-16"
+                className="w-full bg-black outline-none placeholder:text-xl pb-16"
+                value={text}
+                onChange={(e) => setText(e.target.value)}
               ></input>
             </div>
 

@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector } from "react-redux";
 
 import TwitterIcon from "@mui/icons-material/Twitter";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -12,60 +13,116 @@ import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import Avatar from "@mui/material/Avatar";
 
 function LeftSlider() {
+  const currentUser = useSelector((state) => state.auth.currentUser);
+  const { displayName, email, photoURL, uid } = currentUser._delegate;
   return (
     <div className="flex flex-col h-screen justify-between text-white text-xl font-normal pr-18">
-      <div className="flex flex-col gap-6">
-        <TwitterIcon
-          sx={{ fontSize: 35, color: "white" }}
-          className="mb-2 mt-4"
-        />
-        <div className="flex items-center gap-3">
-          <HomeOutlinedIcon sx={{ fontSize: 35, color: "white" }} />
-          <h3>Home</h3>
-        </div>
-        <div className="flex items-center gap-3">
-          <TagIcon sx={{ fontSize: 35, color: "white" }} />
-          <h3>Explore</h3>
-        </div>
-        <div className="flex items-center gap-3">
-          {/* <Badge badgeContent={4} color="primary">
+      <div className="flex flex-col flex-start gap-1">
+        <a
+          href="https://google.pl"
+          target="_blank"
+          className="self-start hover:bg-[#181919] py-3 pl-3 pr-3 rounded-full mb-0 mt-2"
+        >
+          <TwitterIcon sx={{ fontSize: 35, color: "white" }} className="" />
+        </a>
+
+        <a
+          href="https://google.pl"
+          target="_blank"
+          className="self-start hover:bg-[#181919] py-3 pl-3 pr-6  rounded-full"
+        >
+          <div className="flex flex-start items-center gap-3 hover:bg-gray-900">
+            <HomeOutlinedIcon sx={{ fontSize: 35, color: "white" }} />
+            <h3>Home</h3>
+          </div>
+        </a>
+        <a
+          href="https://google.pl"
+          target="_blank"
+          className="self-start hover:bg-[#181919] py-3 pl-3 pr-7 rounded-full"
+        >
+          <div className="flex items-center gap-3">
+            <TagIcon sx={{ fontSize: 35, color: "white" }} />
+            <h3>Explore</h3>
+          </div>
+        </a>
+        <a
+          href="https://google.pl"
+          target="_blank"
+          className="self-start hover:bg-[#181919] py-3 pl-3 pr-7 rounded-full"
+        >
+          <div className="flex items-center gap-3">
             <NotificationsNoneIcon sx={{ fontSize: 35, color: "white" }} />
-          </Badge> */}
-          <NotificationsNoneIcon sx={{ fontSize: 35, color: "white" }} />
-          <h3>Notifications</h3>
-        </div>
-        <div className="flex items-center gap-3">
-          <EmailOutlinedIcon sx={{ fontSize: 35, color: "white" }} />
-          <h3>Messages</h3>
-        </div>
-        <div className="flex items-center gap-3">
-          <BookmarkBorderOutlinedIcon sx={{ fontSize: 35, color: "white" }} />
-          <h3>Bookmarks</h3>
-        </div>
-        <div className="flex items-center gap-3">
-          <FeaturedPlayListOutlinedIcon sx={{ fontSize: 35, color: "white" }} />
-          <h3>Lists</h3>
-        </div>
-        <div className="flex items-center gap-3">
-          <PersonOutlineOutlinedIcon sx={{ fontSize: 35, color: "white" }} />
-          <h3>Profile</h3>
-        </div>
-        <div className="flex items-center gap-3">
-          <MoreHorizOutlinedIcon sx={{ fontSize: 35, color: "white" }} />
-          <h3>More</h3>
-        </div>
+            <h3>Notifications</h3>
+          </div>
+        </a>
+        <a
+          href="https://google.pl"
+          target="_blank"
+          className="self-start hover:bg-[#181919] py-3 pl-3 pr-7 rounded-full"
+        >
+          <div className="flex items-center gap-3">
+            <EmailOutlinedIcon sx={{ fontSize: 35, color: "white" }} />
+            <h3>Messages</h3>
+          </div>
+        </a>
+        <a
+          href="https://google.pl"
+          target="_blank"
+          className="self-start hover:bg-[#181919] py-3 pl-3 pr-7 rounded-full"
+        >
+          <div className="flex items-center gap-3">
+            <BookmarkBorderOutlinedIcon sx={{ fontSize: 35, color: "white" }} />
+            <h3>Bookmarks</h3>
+          </div>
+        </a>
+        <a
+          href="https://google.pl"
+          target="_blank"
+          className="self-start hover:bg-[#181919] py-3 pl-3 pr-7 rounded-full"
+        >
+          <div className="flex items-center gap-3">
+            <FeaturedPlayListOutlinedIcon
+              sx={{ fontSize: 35, color: "white" }}
+            />
+            <h3>Lists</h3>
+          </div>
+        </a>
+        <a
+          href="https://google.pl"
+          target="_blank"
+          className="self-start hover:bg-[#181919] py-3 pl-3 pr-7 rounded-full"
+        >
+          <div className="flex items-center gap-3">
+            <PersonOutlineOutlinedIcon sx={{ fontSize: 35, color: "white" }} />
+            <h3>Profile</h3>
+          </div>
+        </a>
+        <a
+          href="https://google.pl"
+          target="_blank"
+          className="self-start hover:bg-[#181919] py-3 pl-3 pr-7 rounded-full"
+        >
+          <div className="flex items-center gap-3">
+            <MoreHorizOutlinedIcon sx={{ fontSize: 35, color: "white" }} />
+            <h3>More</h3>
+          </div>
+        </a>
         <button
           className="bg-sky-500 py-3 rounded-full font-medium hover:bg-sky-600 transition-all
-          duration-300"
+          duration-300 mt-4"
         >
           Tweet
         </button>
       </div>
       <div className="flex justify-center items-center gap-3 text-base mb-6">
-        <Avatar />
+        <Avatar src={photoURL} />
         <div className="mr-4">
-          <p className="font-medium">Maciej</p>
-          <p className="text-gray-400">@Maciej73797965</p>
+          <p className="font-medium">{displayName}</p>
+          <p className="text-gray-400">{`@${displayName}${uid.slice(
+            0,
+            10
+          )}`}</p>
         </div>
         <MoreHorizOutlinedIcon />
       </div>
