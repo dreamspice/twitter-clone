@@ -21,12 +21,8 @@ function App() {
       .auth()
       .signInWithPopup(provider)
       .then((result) => {
-        const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-          dispatch(authActions.setCurrentUser(user));
-        });
-        unsubscribe();
-        dispatch(authActions.login());
-        const { displayName, email, photoURL, uid } = currentUser._delegate;
+        const user = result.user;
+        const { displayName, email, photoURL, uid } = user;
         const updatedCurrentUser = { displayName, email, photoURL, uid };
         const usersRef = firebase.database().ref("users");
         usersRef.child(uid).once("value", (snapshot) => {
@@ -34,19 +30,13 @@ function App() {
             usersRef.child(uid).set(updatedCurrentUser);
           }
         });
+        dispatch(authActions.setCurrentUser(updatedCurrentUser));
+        dispatch(authActions.login());
       })
       .catch((error) => {
         console.log(error.message);
       });
   };
-
-  useEffect(() => {
-    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
-      dispatch(authActions.setCurrentUser(user));
-    });
-
-    return unsubscribe;
-  }, [dispatch]);
 
   let content = (
     <div className="absolute left-2/4 top-2/4 -translate-x-2/4 -translate-y-2/4">

@@ -10,11 +10,6 @@ import moment from "moment";
 function Posts() {
   const dispatch = useDispatch();
   const posts = useSelector((state) => state.posts.posts);
-  console.log(posts);
-
-  const addLike = () => {
-    console.log("like");
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -38,6 +33,7 @@ function Posts() {
           .reverse()
           .map((post) => (
             <Post
+              id={post.postId}
               name={post.displayName}
               text={post.text}
               photo={post.photoURL}
@@ -45,7 +41,6 @@ function Posts() {
               key={post.timestamp}
               likes={post.howManyLikes}
               comments={post.comments}
-              addLike={addLike}
             />
           ))}
     </div>

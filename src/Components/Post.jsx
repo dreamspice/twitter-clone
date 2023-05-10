@@ -10,7 +10,7 @@ function Post(props) {
   const [commentColor, setCommentColor] = useState(false);
   const changeHeartColor = () => {
     setHeartColor(!heartColor);
-    return props.addLike();
+    console.log(props.postId);
   };
 
   const changeCommentColor = () => {

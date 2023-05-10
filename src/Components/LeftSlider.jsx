@@ -14,7 +14,7 @@ import Avatar from "@mui/material/Avatar";
 
 function LeftSlider() {
   const currentUser = useSelector((state) => state.auth.currentUser);
-  const { displayName, email, photoURL, uid } = currentUser._delegate;
+  const { displayName, email, photoURL, uid } = currentUser;
   return (
     <div className="flex flex-col h-screen justify-between text-white text-xl font-normal pr-18">
       <div className="flex flex-col flex-start gap-1">

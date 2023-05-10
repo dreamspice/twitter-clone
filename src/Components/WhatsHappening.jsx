@@ -12,7 +12,7 @@ import { postsActions } from "../store";
 
 function WhatsHappening() {
   const currentUser = useSelector((state) => state.auth.currentUser);
-  const { displayName, email, photoURL, uid } = currentUser._delegate;
+  const { displayName, email, photoURL, uid } = currentUser;
   const dispatch = useDispatch();
 
   const [text, setText] = useState("");
@@ -20,13 +20,16 @@ function WhatsHappening() {
   const submit = async (e) => {
     e.preventDefault();
     const newPostRef = firebase.database().ref("posts").push();
+    const postId = newPostRef.getKey();
     const newPost = {
+      postId,
       displayName,
       text,
       timestamp: firebase.database.ServerValue.TIMESTAMP,
       photoURL,
       howManyLikes: 0,
       comments: 0,
+      whoLiked: [],
     };
     if (!text) return;
     newPostRef.set(newPost);
