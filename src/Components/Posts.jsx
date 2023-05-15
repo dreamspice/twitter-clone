@@ -41,6 +41,7 @@ function Posts() {
               key={post.timestamp}
               likes={post.howManyLikes}
               comments={post.comments}
+              image={post.imageUrl}
             />
           ))}
     </div>

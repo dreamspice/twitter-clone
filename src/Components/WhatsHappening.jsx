@@ -1,11 +1,12 @@
-import { useState, useId } from "react";
-import { Avatar } from "@mui/material";
+import { useState, useId, useRef } from "react";
+import { Avatar, IconButton } from "@mui/material";
 import ImageIcon from "@mui/icons-material/Image";
 import GifBoxIcon from "@mui/icons-material/GifBox";
 import EmojiEmotionsIcon from "@mui/icons-material/EmojiEmotions";
 import { useSelector } from "react-redux";
 import firebase from "../firebase";
 import "firebase/database";
+import "firebase/storage";
 import moment from "moment";
 import { useDispatch } from "react-redux";
 import { postsActions } from "../store";
@@ -18,8 +19,33 @@ function WhatsHappening() {
 
   const [text, setText] = useState("");
 
+  const [image, setImage] = useState(null);
+  const fileInputRef = useRef(null);
+
+  const handleChooseImage = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+  };
+
+  const uploadImage = async () => {
+    if (image) {
+      const storageRef = firebase.storage().ref();
+      const fileRef = storageRef.child(image.name);
+      await fileRef.put(image);
+      const imageUrl = await fileRef.getDownloadURL();
+      return imageUrl;
+    }
+    return null;
+  };
+
   const submit = async (e) => {
     e.preventDefault();
+
+    const imageUrl = await uploadImage();
     const newPostRef = firebase.database().ref("posts").push();
     const postId = newPostRef.getKey();
     const newPost = {
@@ -31,10 +57,12 @@ function WhatsHappening() {
       howManyLikes: 0,
       comments: 0,
       whoLiked: [],
+      imageUrl,
     };
     if (!text) return;
     newPostRef.set(newPost);
     setText("");
+    setImage(null);
 
     const postsRef = firebase.database().ref("posts");
     try {
@@ -68,7 +96,17 @@ function WhatsHappening() {
 
             <div className="flex items-center justify-between px-6 mt-2">
               <div className="flex gap-4">
-                <ImageIcon />
+                <input
+                  type="file"
+                  accept="image/*"
+                  style={{ display: "none" }}
+                  ref={fileInputRef}
+                  onChange={handleImageChange}
+                ></input>
+                <ImageIcon
+                  onClick={handleChooseImage}
+                  style={{ cursor: "pointer" }}
+                />
                 <GifBoxIcon />
                 <EmojiEmotionsIcon />
               </div>

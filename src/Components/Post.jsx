@@ -126,7 +126,10 @@ function Post(props) {
               <MoreHorizOutlinedIcon sx={{ color: "rgb(107, 114, 128)" }} />
             </button>
           </div>
-          <div>{props.text}</div>
+          <div>
+            <span>{props.text}</span>
+            <img src={props.image} className="w-4/6 mt-2 rounded-3xl" />
+          </div>
           <div className="mt-2">
             {/* <button
               className={`mr-4  text-gray-500 hover:text-sky-500 ${
