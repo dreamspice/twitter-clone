@@ -3,7 +3,7 @@ import "firebase/database";
 
 import { createSlice, configureStore } from "@reduxjs/toolkit";
 
-const initialAuthState = { currentUser: null, isLogin: null };
+const initialAuthState = { currentUser: null, isLogin: false };
 
 const authSlice = createSlice({
   name: "auth",
@@ -15,9 +15,9 @@ const authSlice = createSlice({
     setCurrentUser(state, action) {
       state.currentUser = action.payload;
     },
-  },
-  logout(state) {
-    state.isLogin = false;
+    logout(state) {
+      state.isLogin = false;
+    },
   },
 });
 

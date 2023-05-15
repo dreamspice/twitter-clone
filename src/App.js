@@ -16,6 +16,7 @@ function App() {
 
   const handleSignInWithGoogle = () => {
     const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: "select_account" });
     firebase
       .auth()
       .signInWithPopup(provider)
@@ -53,10 +54,14 @@ function App() {
     </div>
   );
 
+  const logout = () => {
+    dispatch(authActions.logout());
+  };
+
   if (isLogin) {
     content = (
       <>
-        <LeftSlider />
+        <LeftSlider logout={logout} />
         <Content />
         <RightSlider />
       </>

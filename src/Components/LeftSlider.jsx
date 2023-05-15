@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import LogoutModal from "./LogoutModal";
 
 import TwitterIcon from "@mui/icons-material/Twitter";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -12,9 +13,15 @@ import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import Avatar from "@mui/material/Avatar";
 
-function LeftSlider() {
+function LeftSlider(props) {
   const currentUser = useSelector((state) => state.auth.currentUser);
   const { displayName, email, photoURL, uid } = currentUser;
+
+  const [modalLogoutIsShown, setModalLogoutIsShown] = useState(false);
+
+  const openLogoutModal = () => {
+    setModalLogoutIsShown((prevstate) => !prevstate);
+  };
   return (
     <div className="flex flex-col h-screen justify-between text-white text-xl font-normal pr-18">
       <div className="flex flex-col flex-start gap-1">
@@ -115,16 +122,28 @@ function LeftSlider() {
           Tweet
         </button>
       </div>
-      <div className="flex justify-center items-center gap-3 text-base mb-6">
-        <Avatar src={photoURL} />
-        <div className="mr-4">
-          <p className="font-medium">{displayName}</p>
-          <p className="text-gray-400">{`@${displayName}${uid.slice(
-            0,
-            10
-          )}`}</p>
+      <div className="flex flex-col">
+        {modalLogoutIsShown && (
+          <LogoutModal
+            displayName={displayName}
+            uid={uid.slice(0, 10)}
+            logout={props.logout}
+          />
+        )}
+        <div
+          className="flex justify-center items-center gap-3 text-base mb-6 hover:hover:bg-[#181919] p-2 rounded-full cursor-pointer"
+          onClick={openLogoutModal}
+        >
+          <Avatar src={photoURL} />
+          <div className="mr-4">
+            <p className="font-medium">{displayName}</p>
+            <p className="text-gray-400">{`@${displayName}${uid.slice(
+              0,
+              10
+            )}`}</p>
+          </div>
+          <MoreHorizOutlinedIcon />
         </div>
-        <MoreHorizOutlinedIcon />
       </div>
     </div>
   );
