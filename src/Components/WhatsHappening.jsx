@@ -12,6 +12,7 @@ import { postsActions } from "../store";
 
 function WhatsHappening() {
   const currentUser = useSelector((state) => state.auth.currentUser);
+  console.log(currentUser);
   const { displayName, email, photoURL, uid } = currentUser;
   const dispatch = useDispatch();
 

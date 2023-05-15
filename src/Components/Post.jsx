@@ -1,21 +1,112 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Avatar } from "@mui/material";
 import MoreHorizOutlinedIcon from "@mui/icons-material/MoreHorizOutlined";
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
+import firebase from "../firebase";
+import "firebase/database";
+import { useDispatch } from "react-redux";
+import { postsActions } from "../store";
 
 function Post(props) {
-  const [heartColor, setHeartColor] = useState(false);
-  const [commentColor, setCommentColor] = useState(false);
-  const changeHeartColor = () => {
-    setHeartColor(!heartColor);
-    console.log(props.postId);
+  const userID = useSelector((state) => state.auth.currentUser.uid);
+  const dispatch = useDispatch();
+
+  const [isLiked, setIsLiked] = useState(() => {
+    const firebasePostRef = firebase.database().ref(`posts/${props.id}`);
+    firebasePostRef.once("value").then((snapshot) => {
+      const value = snapshot.val();
+      const { whoLiked } = value;
+      if (!whoLiked) return;
+      const whoLikedArray = [];
+      Object.values(whoLiked).forEach((val) => {
+        whoLikedArray.push(val);
+      });
+      const user = whoLikedArray?.find((user) => user === userID);
+      if (user) {
+        setIsLiked(true);
+      } else {
+        setIsLiked(false);
+      }
+    });
+  });
+
+  const addOrRemoveLike = async () => {
+    // const firebasePostRef = firebase.database().ref(`posts/${props.id}`);
+    // firebasePostRef.once("value").then((snapshot) => {
+    //   const value = snapshot.val();
+    //   const { whoLiked } = value;
+    //   console.log(whoLiked);
+    //   const user = whoLiked?.find((user) => user === userID);
+    //   if (!user) {
+    //     let currentLikes;
+    //     firebasePostRef.child("howManyLikes").once("value", (snapshot) => {
+    //       currentLikes = snapshot.val();
+    //       firebasePostRef.update({ howManyLikes: currentLikes + 1 });
+    //       firebasePostRef.update({ whoLiked: [userID] });
+    //       setIsLiked(true);
+    //     });
+    //   }
+    //   if (user) {
+    //     let currentLikes;
+    //     firebasePostRef.child("howManyLikes").once("value", (snapshot) => {
+    //       currentLikes = snapshot.val();
+    //       firebasePostRef.update({ howManyLikes: currentLikes + -1 });
+    //       firebasePostRef.update({ whoLiked: [] });
+    //       setIsLiked(false);
+    //     });
+    //   }
+    // });
+
+    const firebasePostRef = firebase.database().ref(`posts/${props.id}`);
+    firebasePostRef.once("value").then((snapshot) => {
+      const value = snapshot.val();
+      const { whoLiked } = value;
+      const whoLikedArray = [];
+      if (whoLiked) {
+        Object.values(whoLiked).forEach((val) => {
+          whoLikedArray.push(val);
+        });
+      }
+      const userIndex = whoLikedArray?.indexOf(userID);
+      console.log(userIndex);
+      if (userIndex === -1) {
+        let currentLikes;
+        firebasePostRef.child("howManyLikes").once("value", (snapshot) => {
+          currentLikes = snapshot.val();
+          firebasePostRef.update({ howManyLikes: currentLikes + 1 });
+          firebasePostRef.child("whoLiked").push(userID);
+          setIsLiked(true);
+        });
+      }
+      if (userIndex > -1) {
+        let currentLikes;
+        firebasePostRef.child("howManyLikes").once("value", (snapshot) => {
+          currentLikes = snapshot.val();
+          firebasePostRef.update({ howManyLikes: currentLikes - 1 });
+          firebasePostRef
+            .child("whoLiked")
+            .child(Object.keys(whoLiked)[userIndex])
+            .remove();
+          setIsLiked(false);
+        });
+      }
+    });
+
+    const postsRef = firebase.database().ref("posts");
+    try {
+      const snapshot = await postsRef.once("value");
+      const posts = snapshot.val();
+      dispatch(postsActions.setPosts(posts));
+    } catch (error) {
+      dispatch(postsActions.setError(error.message));
+    }
   };
 
-  const changeCommentColor = () => {
-    setCommentColor(!commentColor);
-  };
+  const addComment = () => {};
+  const commentColor = true;
+
   return (
     <div className="w-full p-4 border-b-[1px] border-gray-700">
       <div className="flex">
@@ -37,20 +128,20 @@ function Post(props) {
           </div>
           <div>{props.text}</div>
           <div className="mt-2">
-            <button
+            {/* <button
               className={`mr-4  text-gray-500 hover:text-sky-500 ${
                 commentColor ? "text-sky-500" : ""
               }`}
-              onClick={changeCommentColor}
+              onClick={addComment}
             >
               <ChatBubbleOutlineOutlinedIcon />
               <span className="ml-1">{props.comments}</span>
-            </button>
+            </button> */}
             <button
               className={`mr-4 text-gray-500 hover:text-red-500 ${
-                heartColor ? "text-red-500" : ""
+                isLiked ? "text-red-500" : ""
               }`}
-              onClick={changeHeartColor}
+              onClick={addOrRemoveLike}
             >
               <FavoriteBorderOutlinedIcon />
               <span className="ml-1">{props.likes}</span>

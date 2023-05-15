@@ -3,7 +3,7 @@ import "firebase/database";
 
 import { createSlice, configureStore } from "@reduxjs/toolkit";
 
-const initialAuthState = { currentUser: null, isLogin: false };
+const initialAuthState = { currentUser: null, isLogin: null };
 
 const authSlice = createSlice({
   name: "auth",
@@ -29,7 +29,6 @@ const postsSlice = createSlice({
   reducers: {
     setPosts(state, action) {
       state.posts = action.payload;
-      console.log(state.posts);
     },
     setError(state, action) {
       state.error = action.payload;

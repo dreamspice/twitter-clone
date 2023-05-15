@@ -12,7 +12,6 @@ import RightSlider from "./Components/RightSlider";
 
 function App() {
   const isLogin = useSelector((state) => state.auth.isLogin);
-  const currentUser = useSelector((state) => state.auth.currentUser);
   const dispatch = useDispatch();
 
   const handleSignInWithGoogle = () => {
